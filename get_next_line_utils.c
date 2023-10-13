@@ -1,23 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sephilip <sephlip@student.42lisboa.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/09 15:41:57 by sephilip          #+#    #+#             */
-/*   Updated: 2023/10/13 12:51:27 by sephilip         ###   ########.fr       */
+/*   Created: 2023/10/13 12:20:21 by sephilip          #+#    #+#             */
+/*   Updated: 2023/10/13 12:35:03 by sephilip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-/*
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h> 
-#include <stdlib.h>
-
 
 int	ft_verline(char *str)
 {
@@ -85,14 +78,14 @@ char	*ft_smallbuf(int fd, char *save, char *tmp) //the \n not yet found
 		big = inccpy(tmp, ""); //meter tudo para o big, para que nao haja probl
 	while (ft_verline(tmp) == -1)
 	{
-		a = read(fd, tmp, buf);
+		a = read(fd, tmp, BUFFER_SIZE);
 		big = inccpy(big, tmp);
-		if (a < buf)
+		if (a < BUFFER_SIZE)
 			break ;
 	} // eof or found the \n
 	// instead of having it in gnl
 	i = 0;
-	while (i < buf)
+	while (i < BUFFER_SIZE)
 	{
 		tmp[i] = 0;
 		i++;
@@ -108,52 +101,10 @@ char	*ft_bigbuf(char *save, char *tmp) //the \n is in here
 	if (save)
 		str = inccpy(save, tmp);
 	i = 0;
-	while (i < buf)
+	while (i < BUFFER_SIZE)
 	{
 		tmp[i] = 0;
 		i++;
 	}
 	return (str);
-}*/
-
-
-char	*get_next_line(int fd)
-{
-	static char	*save = "";
-	char	tmp[BUFFER_SIZE];
-	char	*str;
-	int	a;
-	int	i;
-
-	if (ft_verline(save) == -1) //not in save
-	{
-		a = read(fd, tmp, BUFFER_SIZE);
-		if (a != BUFFER_SIZE || ft_verline(tmp) != -1) // in tmp
-			save = ft_bigbuf(save, tmp);
-		else					// not in tmp || could a < buf
-			save = ft_smallbuf(fd, save, tmp);
-	}
-	i = 0;
-	while ((save[i] != '\n') && (save[i] != '\0')) // here \n always found
-		i++;
-	str = (char *)malloc((i + 2) * sizeof(char));
-	if (!str)
-		return (NULL);
-	ft_strlcpy(str, save, i + 2);
-	save += (i + 1);
-	return (str);
 }
-/*
-int	main()
-{
-	int	fd;
-
-	fd = open("3text.txt", O_RDONLY);
-	printf("->%s", get_next_line(fd));
-	printf("->%s", get_next_line(fd));
-	printf("->%s", get_next_line(fd));
-	printf("->%s", get_next_line(fd));
-	printf("->%s", get_next_line(fd));
-	close(fd);
-	return (0);
-}*/
