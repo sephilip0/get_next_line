@@ -6,7 +6,7 @@
 /*   By: sephilip <sephlip@student.42lisboa.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 12:20:21 by sephilip          #+#    #+#             */
-/*   Updated: 2023/10/17 15:41:46 by sephilip         ###   ########.fr       */
+/*   Updated: 2023/10/17 16:48:35 by sephilip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,13 @@ char	*ft_bufan(int fd, char *save, char *tmp, int	a) //the \n not yet found
 	char	*big;
 	int	i;
 
-	if (save)
+	if (save) //ha save mas \n nao esta la
 	{
 		big = inccpy(save, tmp);
-		if (a < BUFFER_SIZE)
-			free(save);
+//		free(save);
 	}
-	else if (a == BUFFER_SIZE || ft_verline(tmp) == -1)
+	//else?
+	if (a == BUFFER_SIZE || ft_verline(tmp) == -1) //se nao estamos no final ou nao ha no tmp
 	{
 		big = inccpy(tmp, ""); //meter tudo para o big, para que nao haja probl
 		while (ft_verline(tmp) == -1)
