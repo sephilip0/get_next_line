@@ -6,7 +6,7 @@
 /*   By: sephilip <sephlip@student.42lisboa.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/09 15:41:57 by sephilip          #+#    #+#             */
-/*   Updated: 2023/10/13 12:51:27 by sephilip         ###   ########.fr       */
+/*   Updated: 2023/10/17 15:47:42 by sephilip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,18 +120,19 @@ char	*ft_bigbuf(char *save, char *tmp) //the \n is in here
 char	*get_next_line(int fd)
 {
 	static char	*save = "";
-	char	tmp[BUFFER_SIZE];
-	char	*str;
 	int	a;
+	char	tmp[BUFFER_SIZE + 1];
+	char	*str;
 	int	i;
 
+	if (BUFFER_SIZE < 0 || fd < 0 || read(fd, tmp, 0 < 0))
+		return (NULL);
 	if (ft_verline(save) == -1) //not in save
 	{
 		a = read(fd, tmp, BUFFER_SIZE);
-		if (a != BUFFER_SIZE || ft_verline(tmp) != -1) // in tmp
-			save = ft_bigbuf(save, tmp);
-		else					// not in tmp || could a < buf
-			save = ft_smallbuf(fd, save, tmp);
+		tmp[a] = 0;
+//		printf("LIDO: %s\n\n", tmp);
+		save = ft_bufan(fd, save, tmp, a);
 	}
 	i = 0;
 	while ((save[i] != '\n') && (save[i] != '\0')) // here \n always found
@@ -140,20 +141,33 @@ char	*get_next_line(int fd)
 	if (!str)
 		return (NULL);
 	ft_strlcpy(str, save, i + 2);
-	save += (i + 1);
+//	printf("SAVE ANTES: %s\n\n", save);
+	save = ft_save(save, (i + 1));
+//	printf("SAVE DEPOIS: %s\n\n", save);
 	return (str);
 }
-/*
+
 int	main()
 {
 	int	fd;
+	char	*ptr;
 
 	fd = open("3text.txt", O_RDONLY);
-	printf("->%s", get_next_line(fd));
-	printf("->%s", get_next_line(fd));
-	printf("->%s", get_next_line(fd));
-	printf("->%s", get_next_line(fd));
-	printf("->%s", get_next_line(fd));
+	ptr = get_next_line(fd);
+	printf("--->%s", ptr);
+	free(ptr);
+	ptr = get_next_line(fd);
+	printf("--->%s", ptr);
+	free(ptr);
+	ptr = get_next_line(fd);
+	printf("--->%s", ptr);
+	free(ptr);
+	ptr = get_next_line(fd);
+	printf("--->%s", ptr);
+	free(ptr);
+	ptr = get_next_line(fd);
+	printf("--->%s\n\n", ptr);
+	free(ptr);
 	close(fd);
 	return (0);
-}*/
+}

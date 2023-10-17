@@ -6,7 +6,7 @@
 /*   By: sephilip <sephlip@student.42lisboa.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 12:20:21 by sephilip          #+#    #+#             */
-/*   Updated: 2023/10/13 12:35:03 by sephilip         ###   ########.fr       */
+/*   Updated: 2023/10/17 15:41:46 by sephilip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 		return (len);
 	while (src[i] && (i < size - 1))
 	{
+//		printf("DST[%zu] = %c\n\n", i, dst[i]);
 		dst[i] = src[i];
 		i++;
 	}
@@ -52,6 +53,7 @@ char	*inccpy(char *big, char *glued)
 	int	i;
 	int	j;
 
+//	printf("ENTROU INCCPY\n\n");
 	i = 0;
 	j = 0;
 	while (big[i])
@@ -63,27 +65,32 @@ char	*inccpy(char *big, char *glued)
 		return (NULL);
 	ft_strlcpy(str, big, i + 1);
 	ft_strlcpy(&(str[i]), glued, i + j + 1);
+	//free(big);
 	return (str);
 }
 
-char	*ft_smallbuf(int fd, char *save, char *tmp) //the \n not yet found
+char	*ft_bufan(int fd, char *save, char *tmp, int	a) //the \n not yet found
 {
 	char	*big;
-	int	a;
 	int	i;
 
 	if (save)
-		big = inccpy(save, tmp);
-	else
-		big = inccpy(tmp, ""); //meter tudo para o big, para que nao haja probl
-	while (ft_verline(tmp) == -1)
 	{
-		a = read(fd, tmp, BUFFER_SIZE);
-		big = inccpy(big, tmp);
+		big = inccpy(save, tmp);
 		if (a < BUFFER_SIZE)
+			free(save);
+	}
+	else if (a == BUFFER_SIZE || ft_verline(tmp) == -1)
+	{
+		big = inccpy(tmp, ""); //meter tudo para o big, para que nao haja probl
+		while (ft_verline(tmp) == -1)
+		{
+			a = read(fd, tmp, BUFFER_SIZE);
+			big = inccpy(big, tmp);
+			if (a < BUFFER_SIZE)
 			break ;
-	} // eof or found the \n
-	// instead of having it in gnl
+		} // eof or found the \n
+	}
 	i = 0;
 	while (i < BUFFER_SIZE)
 	{
@@ -92,7 +99,30 @@ char	*ft_smallbuf(int fd, char *save, char *tmp) //the \n not yet found
 	}
 	return (big);
 }
-		
+
+char	*ft_save(char	*save, int	a)
+{
+	char	*ret;
+	int	i;
+
+//	printf("A: %d\n\n", a);
+	if (!save[a - 1])
+	{
+		free(save);
+		return (NULL);
+	}
+	i = a;
+	while (save[i])
+		i++;
+//	printf("I: %d\n\n", i);
+	ret = (char *)malloc((i - a + 1) * sizeof(char));
+	if (!ret)
+		return (NULL);
+	ft_strlcpy(ret, &(save[a]), (i + 1));
+	free(save);
+	return (ret);
+}
+/*		
 char	*ft_bigbuf(char *save, char *tmp) //the \n is in here
 {
 	char	*str;
@@ -107,4 +137,4 @@ char	*ft_bigbuf(char *save, char *tmp) //the \n is in here
 		i++;
 	}
 	return (str);
-}
+}*/
