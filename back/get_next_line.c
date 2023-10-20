@@ -6,7 +6,7 @@
 /*   By: sephilip <sephlip@student.42lisboa.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/09 15:41:57 by sephilip          #+#    #+#             */
-/*   Updated: 2023/10/19 15:13:54 by sephilip         ###   ########.fr       */
+/*   Updated: 2023/10/16 16:10:42 by sephilip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,32 +116,28 @@ char	*ft_bigbuf(char *save, char *tmp) //the \n is in here
 	return (str);
 }*/
 
-int	ft_strlen(char *s)
-{
-	int	i;
-
-	i = 0;
-	while(s[i])
-		i++;
-	return (i);
-}
 
 char	*get_next_line(int fd)
 {
 	static char	*save = "";
-	int	a;
 	char	tmp[BUFFER_SIZE + 1];
 	char	*str;
+	int	a;
 	int	i;
 
-	if (BUFFER_SIZE <= 0 || fd < 0 || (read(fd, tmp, 0) < 0))
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (ft_verline(save) == -1) //not in save
 	{
 		a = read(fd, tmp, BUFFER_SIZE);
-		tmp[a] = 0;
-	//	printf("LIDO: %s\n\n", tmp);
-		save = ft_bufan(fd, save, tmp, a);
+//		printf("BUFFER: %d\n", BUFFER_SIZE);
+		tmp[BUFFER_SIZE] = 0;
+//		printf("tmp[%d] = %c\n", BUFFER_SIZE, tmp[BUFFER_SIZE]);
+//		printf("tmp: %s\n", tmp);
+		if (a != BUFFER_SIZE || ft_verline(tmp) != -1) // in tmp
+			save = ft_bigbuf(save, tmp);
+		else					// not in tmp || could a < buf
+			save = ft_smallbuf(fd, save, tmp);
 	}
 	i = 0;
 	while ((save[i] != '\n') && (save[i] != '\0')) // here \n always found
@@ -150,36 +146,27 @@ char	*get_next_line(int fd)
 	if (!str)
 		return (NULL);
 	ft_strlcpy(str, save, i + 2);
-//	printf("SAVE ANTES: %s com len: %d\n\n", save, ft_strlen(save));
-	str = ft_save(str, (0));
-	save = ft_save(save, (i + 1));
-//	printf("SAVE DEPOIS: %p\n\n", save);
-//	printf("str: %s\n", str);
+	save += (i + 1);
+/*	if (ft_verline(save) == -1)
+		free(save);
+	else
+		save += (i + 1);*/
+//	printf("save: %s\n", save);
 	return (str);
 }
-// CORNER CASES
 /*
 int	main()
 {
 	int	fd;
-	char	*ptr;
 
-	fd = open("empty.txt", O_RDONLY);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
+	fd = open("3text.txt", O_RDONLY);
+	printf("->%s", get_next_line(fd));
+	printf("->%s", get_next_line(fd));
+	printf("->%s", get_next_line(fd));
+	printf("->%s", get_next_line(fd));
+	printf("->%s", get_next_line(fd));
+	printf("->%s", get_next_line(fd));
+	printf("->%s", get_next_line(fd));
 	close(fd);
 	return (0);
 }*/

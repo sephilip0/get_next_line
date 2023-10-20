@@ -6,9 +6,7 @@
 /*   By: sephilip <sephlip@student.42lisboa.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 12:20:21 by sephilip          #+#    #+#             */
-/*   Updated: 2023/10/17 16:48:35 by sephilip         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+/*   Updated: 2023/10/19 14:13:20 by sephilip         ###   ########.fr       */
 
 #include "get_next_line.h"
 
@@ -17,6 +15,8 @@ int	ft_verline(char *str)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (-1);
 	while (str[i])
 	{
 		if (str[i] == '\n')
@@ -53,7 +53,6 @@ char	*inccpy(char *big, char *glued)
 	int	i;
 	int	j;
 
-//	printf("ENTROU INCCPY\n\n");
 	i = 0;
 	j = 0;
 	while (big[i])
@@ -65,7 +64,12 @@ char	*inccpy(char *big, char *glued)
 		return (NULL);
 	ft_strlcpy(str, big, i + 1);
 	ft_strlcpy(&(str[i]), glued, i + j + 1);
-	//free(big);
+	if (big[0] != '\0')
+	{
+//		printf("liberdade para o: %s\n", big);
+		free(big);
+	}
+//	printf("len: %d RET: %s\n", (i + j + 1), str);
 	return (str);
 }
 
@@ -74,23 +78,19 @@ char	*ft_bufan(int fd, char *save, char *tmp, int	a) //the \n not yet found
 	char	*big;
 	int	i;
 
-	if (save) //ha save mas \n nao esta la
-	{
+	if (save)//ha save mas \n nao esta la
 		big = inccpy(save, tmp);
-//		free(save);
-	}
-	//else?
-	if (a == BUFFER_SIZE || ft_verline(tmp) == -1) //se nao estamos no final ou nao ha no tmp
+	else
+		big = inccpy("", tmp);
+	while (a == BUFFER_SIZE && ft_verline(big) == -1)
 	{
-		big = inccpy(tmp, ""); //meter tudo para o big, para que nao haja probl
-		while (ft_verline(tmp) == -1)
-		{
-			a = read(fd, tmp, BUFFER_SIZE);
-			big = inccpy(big, tmp);
-			if (a < BUFFER_SIZE)
-			break ;
-		} // eof or found the \n
-	}
+		a = read(fd, tmp, BUFFER_SIZE);
+		tmp[a] = 0;
+//			printf("a: %d tmp: %s\n", a, tmp);
+		big = inccpy(big, tmp);
+		if (a < BUFFER_SIZE)
+		break ;
+	} // eof or found the \n
 	i = 0;
 	while (i < BUFFER_SIZE)
 	{
@@ -102,39 +102,38 @@ char	*ft_bufan(int fd, char *save, char *tmp, int	a) //the \n not yet found
 
 char	*ft_save(char	*save, int	a)
 {
+
+//a = numero a partir do qual queremos cortar
 	char	*ret;
 	int	i;
 
-//	printf("A: %d\n\n", a);
-	if (!save[a - 1])
+	if (save[0] == 0)
 	{
+//		printf("FOI NULO\n");
 		free(save);
-		return (NULL);
+		return(NULL);
 	}
-	i = a;
+//	printf("a: %d\n", a);
+	i = 0;
+//	printf("ALI\n");
 	while (save[i])
+	{
+//		printf("i: %d save: %c\n", i, save[i]);
 		i++;
-//	printf("I: %d\n\n", i);
+	}
+//	printf("i: %d a: %d\n", i, a);
+	if (i <= a) // nao ha save que sobre depois do corte
+	{
+//		printf("VAI MOLEKE %s\n", save);
+		free(save);
+		return (NULL);	
+	}
 	ret = (char *)malloc((i - a + 1) * sizeof(char));
 	if (!ret)
 		return (NULL);
 	ft_strlcpy(ret, &(save[a]), (i + 1));
+//	printf("abandonar navio: %s\n", save);
+//	printf("capitao com %s!\n", ret);
 	free(save);
 	return (ret);
 }
-/*		
-char	*ft_bigbuf(char *save, char *tmp) //the \n is in here
-{
-	char	*str;
-	int	i;
-
-	if (save)
-		str = inccpy(save, tmp);
-	i = 0;
-	while (i < BUFFER_SIZE)
-	{
-		tmp[i] = 0;
-		i++;
-	}
-	return (str);
-}*/

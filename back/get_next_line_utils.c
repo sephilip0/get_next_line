@@ -1,23 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sephilip <sephlip@student.42lisboa.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/09 15:41:57 by sephilip          #+#    #+#             */
-/*   Updated: 2023/10/19 15:13:54 by sephilip         ###   ########.fr       */
+/*   Created: 2023/10/13 12:20:21 by sephilip          #+#    #+#             */
+/*   Updated: 2023/10/16 15:11:47 by sephilip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-/*
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h> 
-#include <stdlib.h>
-
 
 int	ft_verline(char *str)
 {
@@ -85,14 +78,14 @@ char	*ft_smallbuf(int fd, char *save, char *tmp) //the \n not yet found
 		big = inccpy(tmp, ""); //meter tudo para o big, para que nao haja probl
 	while (ft_verline(tmp) == -1)
 	{
-		a = read(fd, tmp, buf);
+		a = read(fd, tmp, BUFFER_SIZE);
 		big = inccpy(big, tmp);
-		if (a < buf)
+		if (a < BUFFER_SIZE)
 			break ;
 	} // eof or found the \n
 	// instead of having it in gnl
 	i = 0;
-	while (i < buf)
+	while (i < BUFFER_SIZE)
 	{
 		tmp[i] = 0;
 		i++;
@@ -108,78 +101,10 @@ char	*ft_bigbuf(char *save, char *tmp) //the \n is in here
 	if (save)
 		str = inccpy(save, tmp);
 	i = 0;
-	while (i < buf)
+	while (i < BUFFER_SIZE)
 	{
 		tmp[i] = 0;
 		i++;
 	}
 	return (str);
-}*/
-
-int	ft_strlen(char *s)
-{
-	int	i;
-
-	i = 0;
-	while(s[i])
-		i++;
-	return (i);
 }
-
-char	*get_next_line(int fd)
-{
-	static char	*save = "";
-	int	a;
-	char	tmp[BUFFER_SIZE + 1];
-	char	*str;
-	int	i;
-
-	if (BUFFER_SIZE <= 0 || fd < 0 || (read(fd, tmp, 0) < 0))
-		return (NULL);
-	if (ft_verline(save) == -1) //not in save
-	{
-		a = read(fd, tmp, BUFFER_SIZE);
-		tmp[a] = 0;
-	//	printf("LIDO: %s\n\n", tmp);
-		save = ft_bufan(fd, save, tmp, a);
-	}
-	i = 0;
-	while ((save[i] != '\n') && (save[i] != '\0')) // here \n always found
-		i++;
-	str = (char *)malloc((i + 2) * sizeof(char));
-	if (!str)
-		return (NULL);
-	ft_strlcpy(str, save, i + 2);
-//	printf("SAVE ANTES: %s com len: %d\n\n", save, ft_strlen(save));
-	str = ft_save(str, (0));
-	save = ft_save(save, (i + 1));
-//	printf("SAVE DEPOIS: %p\n\n", save);
-//	printf("str: %s\n", str);
-	return (str);
-}
-// CORNER CASES
-/*
-int	main()
-{
-	int	fd;
-	char	*ptr;
-
-	fd = open("empty.txt", O_RDONLY);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
-	ptr = get_next_line(fd);
-	printf("--->%s", ptr);
-	free(ptr);
-	close(fd);
-	return (0);
-}*/
