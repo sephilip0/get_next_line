@@ -6,7 +6,7 @@
 /*   By: sephilip <sephlip@student.42lisboa.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 12:22:09 by sephilip          #+#    #+#             */
-/*   Updated: 2023/10/24 15:37:26 by sephilip         ###   ########.fr       */
+/*   Updated: 2023/10/26 17:03:17 by sephilip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,12 @@ char	*get_next_line(int fd);
 int	ft_verline(char *str);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 char	*ft_inccpy(char *big, char *glued, int size);
-char	*ft_save(char *save);
+char	*ft_clear(char buf[1][BUFFER_SIZE + 1], char *str, int	a);
+char	*ft_readline(char buf[1][BUFFER_SIZE + 1], char *str, int fd);
+
+/*char	*ft_save(char *save);*/
+//char	*ft_cleanbuf(char *buf, int size);
+//int	ft_readline(char **str, char buf[1][BUFFER_SIZE + 1], int fd);
+//char	*ft_cleared(char buf[1][BUFFER_SIZE + 1], char *str, int i);
 
 #endif /*GET_NEXT_LINE_H */
