@@ -6,7 +6,7 @@
 /*   By: sephilip <sephlip@student.42lisboa.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 12:20:21 by sephilip          #+#    #+#             */
-/*   Updated: 2023/10/24 22:04:55 by sephilip         ###   ########.fr       */
+/*   Updated: 2023/10/19 14:13:20 by sephilip         ###   ########.fr       */
 
 #include "get_next_line.h"
 
@@ -31,7 +31,6 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	size_t	i;
 	size_t	len;
 
-//	printf("DST: %s STR: %s\n", dst, src);
 	len = 0;
 	i = 0;
 	while (src[len])
@@ -48,34 +47,24 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	return (len);
 }
 
-char	*ft_inccpy(char *big, char *glued, int size)
+char	*inccpy(char *big, char *glued)
 {
 	char	*str;
 	int	i;
+	int	j;
 
 	i = 0;
-//	printf("big: %s\nglued: %s\nsize: %d\n", big, glued, size);
-	if (!big)
-	{
-//		printf("BRO\n");
-		big = "";
-	}
+	j = 0;
 	while (big[i])
 		i++;
-	if (size == 0) //join everything
-	{
-		while (glued[size])
-			size++;
-	}
-//	printf("malozinho: %d\n", size + i + 1);
-	str = (char *)malloc((i + size + 1) * sizeof(char));
+	while (glued[j])
+		j++;
+	str = (char *)malloc((i + j + 1) * sizeof(char));
 	if (!str)
 		return (NULL);
 	ft_strlcpy(str, big, i + 1);
-//	printf("string1: %s\n", str);
-	ft_strlcpy(&(str[i]), glued, size + 1);
-//	printf("string2: %s\n", str);
-	if (*big) //same as big[0] != '\0'
+	ft_strlcpy(&(str[i]), glued, i + j + 1);
+	if (big[0] != '\0')
 	{
 //		printf("liberdade para o: %s\n", big);
 		free(big);
@@ -83,34 +72,68 @@ char	*ft_inccpy(char *big, char *glued, int size)
 //	printf("len: %d RET: %s\n", (i + j + 1), str);
 	return (str);
 }
-/*
-char	*ft_save(char	*str)
+
+char	*ft_bufan(int fd, char *save, char *tmp, int	a) //the \n not yet found
 {
-// recorte do str, o resto no buf
+	char	*big;
+	int	i;
+
+	if (save)//ha save mas \n nao esta la
+		big = inccpy(save, tmp);
+	else
+		big = inccpy("", tmp);
+	while (a == BUFFER_SIZE && ft_verline(big) == -1)
+	{
+		a = read(fd, tmp, BUFFER_SIZE);
+		tmp[a] = 0;
+//			printf("a: %d tmp: %s\n", a, tmp);
+		big = inccpy(big, tmp);
+		if (a < BUFFER_SIZE)
+		break ;
+	} // eof or found the \n
+	i = 0;
+	while (i < BUFFER_SIZE)
+	{
+		tmp[i] = 0;
+		i++;
+	}
+	return (big);
+}
+
+char	*ft_save(char	*save, int	a)
+{
 
 //a = numero a partir do qual queremos cortar
 	char	*ret;
 	int	i;
 
-	if (*str == '\0')
+	if (save[0] == 0)
 	{
-		free(str);
+//		printf("FOI NULO\n");
+		free(save);
 		return(NULL);
 	}
+//	printf("a: %d\n", a);
 	i = 0;
-	while (str[i] != '\n' && str[i] != '\0')
+//	printf("ALI\n");
+	while (save[i])
+	{
+//		printf("i: %d save: %c\n", i, save[i]);
 		i++;
-	if (str[i] == '\n')
-		i++;
+	}
 //	printf("i: %d a: %d\n", i, a);
-	ret = (char *)malloc((i + 1) * sizeof(char));
+	if (i <= a) // nao ha save que sobre depois do corte
+	{
+//		printf("VAI MOLEKE %s\n", save);
+		free(save);
+		return (NULL);	
+	}
+	ret = (char *)malloc((i - a + 1) * sizeof(char));
 	if (!ret)
 		return (NULL);
-	ft_strlcpy(ret, str, (i + 1));
-	//quanto cortamos do buffer?
-	//ft_strlcpy(*buf, buf[a], BUFFER_SIZE);
+	ft_strlcpy(ret, &(save[a]), (i + 1));
 //	printf("abandonar navio: %s\n", save);
 //	printf("capitao com %s!\n", ret);
-	free(str);
+	free(save);
 	return (ret);
-}*/
+}
