@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sephilip <sephilip@student.42lisboa.c      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:28:15 by sephilip          #+#    #+#             */
-/*   Updated: 2023/11/02 13:29:24 by sephilip         ###   ########.fr       */
+/*   Updated: 2023/11/02 15:58:57 by sephilip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	ft_verline(char *str)
 {
@@ -73,10 +73,12 @@ char	*ft_inccpy(char *big, char *glued, int size)
 	return (str);
 }
 
-char	*ft_clear(char buf[1][BUFFER_SIZE + 1], char *str, int a)
+char	*ft_clear(char buf[MAX_FD][BUFFER_SIZE + 1], char *str, int fd, int a)
 {
+	if (fd < 0 || fd > MAX_FD)
+		return (NULL);
 	if (a <= 0)
-		*buf[0] = 0;
+		buf[fd][0] = 0;
 	if (a < 0)
 		return (NULL);
 	return (str);
